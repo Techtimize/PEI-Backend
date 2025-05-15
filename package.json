@@ -22,13 +22,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "lint-staged": {
-    "src/**/*.{ts,tsx,js,jsx,json,css,md}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "src/**/*.{json,css,md}": [
-      
-      "prettier --write"
+    "*.ts": [
+      "npm run lint",
+      "npm run format"
     ]
   },
   "dependencies": {

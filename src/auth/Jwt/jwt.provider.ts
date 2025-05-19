@@ -4,6 +4,7 @@ import { ConfigType } from '@nestjs/config';
 import jwtConfig from './jwt-config';
 import { JwtUserPayLoad } from './interfaces/interfaces';
 import { handleTokenExpiryError } from 'src/Api-Response-Messages/handle-exception';
+import { Role } from '@prisma/client';
 @Injectable()
 export class JwtProvider {
   constructor(
@@ -11,7 +12,7 @@ export class JwtProvider {
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
-  signToken(userId: number, expiresIn: number, role: number) {
+  signToken(userId: string, expiresIn: number, role: Role) {
     return this.jwtService.sign(
       { sub: userId, role },
       {

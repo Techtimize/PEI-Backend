@@ -1,3 +1,4 @@
+import { ResponseStatusCodes } from 'src/CustomResponseStatusCodes/response-status-codes';
 import { PaginationInterface } from './interfaces';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
@@ -90,5 +91,16 @@ export function paginatedSuccessResponse<T>(
     message,
     data,
     pagination,
+  };
+}
+
+export function otpNotVerifiedErrorResponse<T>(
+  message: string,
+  data?: T,
+): ApiResponse<T> {
+  return {
+    statusCode: ResponseStatusCodes.LOCKED,
+    message,
+    data,
   };
 }

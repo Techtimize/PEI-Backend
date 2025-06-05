@@ -1,0 +1,15 @@
+FROM node:24-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY prisma ./prisma
+COPY .env.dev .env
+RUN npx prisma generate
+
+COPY . .
+
+ENV NODE_ENV=dev
+CMD ["npm", "run", "start:dev"]

@@ -11,7 +11,7 @@ import {
 import {
   successResponse,
   unauthorizedError,
-} from 'src/Api-Response-Messages/Api-Responses';
+} from 'src/Api-Response-Messages/api-responses';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
 import * as bcrypt from 'bcrypt';
 

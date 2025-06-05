@@ -8,7 +8,7 @@ import {
   otpNotVerifiedErrorResponse,
   successResponse,
   unauthorizedError,
-} from 'src/Api-Response-Messages/Api-Responses';
+} from 'src/Api-Response-Messages/api-responses';
 import {
   generateOtp,
   exclude,

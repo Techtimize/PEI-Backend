@@ -1,8 +1,8 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
-import jwtConfig from './jwt-config';
-import { JwtUserPayLoad } from './interfaces/interfaces';
+import jwtConfig from '../Jwt/jwt-config';
+import { JwtUserPayLoad } from '../Jwt/interfaces/interfaces';
 import { handleTokenExpiryError } from 'src/Api-Response-Messages/handle-exception';
 import { Role } from '@prisma/client';
 @Injectable()

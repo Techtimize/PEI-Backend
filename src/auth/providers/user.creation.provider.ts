@@ -10,7 +10,7 @@ import {
   successResponse,
   unauthorizedError,
   userAlreadyExistError,
-} from 'src/Api-Response-Messages/Api-Responses';
+} from 'src/Api-Response-Messages/api-responses';
 import { MailService } from 'src/emailModule/email.provider';
 import { VerifyOtpDto } from '../dto/verify.otp';
 import { JwtProvider } from '../Jwt/jwt.provider';

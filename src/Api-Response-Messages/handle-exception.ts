@@ -1,5 +1,5 @@
 import { HttpException, UnauthorizedException } from '@nestjs/common';
-import { ApiResponse, internalServerError } from './Api-Responses';
+import { ApiResponse, internalServerError } from './api-responses';
 
 export function handleException(
   action: string,

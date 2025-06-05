@@ -3,7 +3,7 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtProvider } from '../jwt/jwt.provider';
+import { JwtProvider } from '../Jwt/jwt.provider';
 
 const getJwtProvider = (ctx: ExecutionContext): JwtProvider => {
   const request = ctx.switchToHttp().getRequest();

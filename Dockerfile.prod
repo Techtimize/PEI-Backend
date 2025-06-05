@@ -9,7 +9,10 @@ RUN npm install
 
 # Copy Prisma files (schema, client only — no generate here)
 COPY prisma ./prisma
+COPY .env.prod .env
 
+# Run Prisma client generation
+RUN npx prisma generate
 # Copy rest of the app and build it
 COPY . .
 RUN npm run build

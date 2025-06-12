@@ -15,7 +15,6 @@ RUN npm prune --omit=dev
 
 # Prisma setup
 COPY prisma ./prisma
-COPY .env.prod .env
 RUN npx prisma generate
 
 # Copy app source and build

@@ -1,33 +1,42 @@
 # ---------- Build Stage ----------
-FROM node:24-alpine AS build
+FROM node:20-slim AS build
+
+# Install necessary dependencies (including OpenSSL)
+RUN apt-get update && apt-get install -y openssl ca-certificates \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 # Install dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm install 
+RUN npm prune --omit=dev
 
-# Copy Prisma files (schema, client only — no generate here)
+
+# Prisma setup
 COPY prisma ./prisma
-
-
-# Run Prisma client generation
+COPY .env.prod .env
 RUN npx prisma generate
-# Copy rest of the app and build it
+
+# Copy app source and build
 COPY . .
 RUN npm run build
 
 # ---------- Production Stage ----------
-FROM node:24-alpine AS production
+FROM node:20-slim AS production
+
+# Install OpenSSL in production container too
+RUN apt-get update && apt-get install -y openssl ca-certificates \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy built app, dependencies, and prisma schema
+# Copy build artifacts
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/prisma ./prisma
 
-ENV NODE_ENV=prod
+ENV NODE_ENV=production
 
 CMD ["node", "dist/src/main.js"]

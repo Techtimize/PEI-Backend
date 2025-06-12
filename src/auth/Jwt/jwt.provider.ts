@@ -4,7 +4,7 @@ import { ConfigType } from '@nestjs/config';
 import jwtConfig from '../Jwt/jwt-config';
 import { JwtUserPayLoad } from '../Jwt/interfaces/interfaces';
 import { handleTokenExpiryError } from 'src/Api-Response-Messages/handle-exception';
-import { Role } from '@prisma/client';
+
 @Injectable()
 export class JwtProvider {
   constructor(
@@ -12,9 +12,9 @@ export class JwtProvider {
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
-  signToken(userId: string, expiresIn: number, role: Role) {
+  signToken(micrsoftId: string, expiresIn: number, role: string) {
     return this.jwtService.sign(
-      { sub: userId, role },
+      { sub: micrsoftId, role },
       {
         audience: this.jwtConfiguration.audience,
         issuer: this.jwtConfiguration.issuer,
@@ -26,9 +26,17 @@ export class JwtProvider {
 
   async generateTokens(user: JwtUserPayLoad) {
     const [accessToken, refreshToken] = await Promise.all([
-      this.signToken(user.id, this.jwtConfiguration.accessTokenTtl, user.role),
+      this.signToken(
+        user.microsoftId,
+        this.jwtConfiguration.accessTokenTtl,
+        user.role,
+      ),
 
-      this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl, user.role),
+      this.signToken(
+        user.microsoftId,
+        this.jwtConfiguration.refreshTokenTtl,
+        user.role,
+      ),
     ]);
     return {
       accessToken,

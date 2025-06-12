@@ -1,19 +1,14 @@
 import { PrismaService } from 'prisma/prisma.service';
 import { MailService } from 'src/emailModule/email.provider';
 import { JwtProvider } from '../Jwt/jwt.provider';
-import { LoginDto } from '../dto/login.dto';
+
 import { handleException } from 'src/Api-Response-Messages/handle-exception';
-import * as bcrypt from 'bcrypt';
-import {
-  otpNotVerifiedErrorResponse,
-  successResponse,
-  unauthorizedError,
-} from 'src/Api-Response-Messages/api-responses';
-import {
-  generateOtp,
-  exclude,
-} from 'src/GlobalFunctions/common-global-functions';
+
+import axios from 'axios';
+import { successResponse } from 'src/Api-Response-Messages/api-responses';
+
 import { Injectable } from '@nestjs/common';
+import { MicrosoftTokenDto } from '../dto/microsoft.token.dto';
 @Injectable()
 export class LoginProvider {
   private readonly prismaService: PrismaService;
@@ -29,64 +24,46 @@ export class LoginProvider {
     this.jwtProvider = jwtProvider;
   }
 
-  async login(loginDto: LoginDto) {
+  async login(accessTokenDto: MicrosoftTokenDto) {
     try {
-      const existingUser = await this.prismaService.user.findUnique({
-        where: { email: loginDto.email },
-      });
-      if (!existingUser) {
-        return unauthorizedError('invalid login credentials');
-      }
-
-      if (existingUser && !existingUser.otpVerified) {
-        const safeUser = exclude(existingUser, [
-          'password',
-          'otp',
-          'otpExpiresAt',
-          'otpVerified',
-        ]);
-        const otp = generateOtp();
-        await this.mailService.sendOtpEmail(
-          existingUser.email,
-          existingUser.name,
-          otp,
-        );
-        await this.prismaService.user.update({
-          where: { email: existingUser.email },
-          data: {
-            otp,
-            otpExpiresAt: new Date(Date.now() + 5 * 60 * 1000),
-          },
-        });
-
-        return otpNotVerifiedErrorResponse('otp not verified', safeUser);
-      }
-      const isPasswordValid = await bcrypt.compare(
-        loginDto.password,
-        existingUser.password,
-      );
-      if (!isPasswordValid) {
-        return unauthorizedError('invalid login credentials');
-      }
-      const { accessToken, refreshToken } =
-        await this.jwtProvider.generateTokens({
-          id: existingUser.id,
-          role: existingUser.role,
-        });
-      const updatedUser = await this.prismaService.user.update({
-        where: { id: existingUser.id },
-        data: {
-          refreshToken: refreshToken,
-          accessToken: accessToken,
+      const res = await axios.get('https://graph.microsoft.com/v1.0/me', {
+        headers: {
+          Authorization: `Bearer ${accessTokenDto.access_token}`,
         },
       });
-      const safeUser = exclude(updatedUser, [
-        'password',
-        'otp',
-        'otpExpiresAt',
-        'otpVerified',
-      ]);
-      return successResponse('login successful', safeUser);
+      const data = res.data;
+      const { accessToken, refreshToken } =
+        await this.jwtProvider.generateTokens({
+          microsoftId: data.id,
+          role: 'USER',
+        });
+      const existingUser = await this.prismaService.user.findUnique({
+        where: { microsoftId: data.id },
+      });
+      if (existingUser) {
+        const result = await this.prismaService.user.update({
+          where: { microsoftId: data.id },
+          data: {
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          },
+        });
+        return successResponse('login successful', result);
+      }
+
+      await this.prismaService.user.create({
+        data: {
+          microsoftId: data.id,
+          displayName: data.displayName,
+          givenName: data.givenName,
+          surname: data.surname,
+          email: data.mail,
+          accessToken,
+          refreshToken,
+          role: 'USER',
+        },
+      });
+      return successResponse('login successful', res.data);
     } catch (error) {
       return handleException('error while logging', error);
     }

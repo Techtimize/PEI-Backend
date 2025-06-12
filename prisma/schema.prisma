@@ -4,26 +4,20 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlserver"
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  USER
-  ADMIN
-}
-
 model User {
-  id           String    @id @default(uuid())
-  email        String    @unique
-  password     String
-  name         String
-  otp          Int?
-  otpExpiresAt DateTime?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  otpVerified  Boolean   @default(false)
+  id           String   @id @default(uuid())
+  email        String   @unique
+  displayName  String?
+  givenName    String?
+  surname      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   accessToken  String?
   refreshToken String?
-  role         Role      @default(USER)
+  role         String   @default("USER")
+  microsoftId  String?  @unique
 }

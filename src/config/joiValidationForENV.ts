@@ -19,21 +19,11 @@ export const validationSchema = Joi.object({
   JWT_ACCESS_TOKEN_TTL: Joi.number().positive().required(),
   JWT_REFRESH_TOKEN_TTL: Joi.number().positive().required(),
 
-  // Microsoft SSO
-  MS_CLIENT_ID: Joi.string()
-    .guid({ version: ['uuidv4'] })
-    .required(),
-  MS_TENANT_ID: Joi.string()
-    .guid({ version: ['uuidv4'] })
-    .required(),
-  MICROSOFT_ISSUER: Joi.string().uri().required(),
-  MS_JWKS_URI: Joi.string().uri().required(),
-
   // Azure AD
-  AZURE_AD_AUDIENCE: Joi.string()
+  AZURE_CLIENT_ID: Joi.string()
     .guid({ version: ['uuidv4'] })
     .required(),
-  AZURE_AD_TENANTID: Joi.string()
+  AZURE_TENANT_ID: Joi.string()
     .guid({ version: ['uuidv4'] })
     .required(),
 });

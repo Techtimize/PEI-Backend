@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   # Development Service
   app-dev:
@@ -9,13 +11,30 @@ services:
       - .env.dev
     ports:
       - "3000:3000"
+    
+
     depends_on:
-      - db
+      - mssql
+    restart: on-failure
+
+    networks:
+      - nest-network
+  
     volumes:
       - .:/app
       - /app/node_modules
+   
     profiles:
       - dev
+      
+
+    command: >
+      sh -c "
+        echo 'Waiting for MSSQL to be ready...' &&
+        sleep 10 &&
+        npx prisma migrate dev &&
+        npm run start:dev
+      "
 
   # Production Service
   app-prod:
@@ -27,33 +46,46 @@ services:
       - .env.prod
     ports:
       - "8080:3000"
-    depends_on:
-      - db
+    
+    restart: on-failure
+    
+        
+        
     profiles:
       - prod
+    networks:
+      - nest-network
+  
+    command: >
+      sh -c "
+        npx prisma migrate deploy &&
+        node dist/src/main.js
+      "
 
-  # Database Service (Postgres)
-  db:
-    image: postgres:17-alpine
-    container_name: nest-js-db
-    ports:
-      - "5432:5432"
-    env_file:
-      - .env.dev 
-    volumes:
-      - db-data:/var/lib/postgresql/data
 
-  # Optional PgAdmin (for DB viewing)
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: nestjs-pgadmin
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: nestjs-mssql
     ports:
-      - "5050:80"
-    depends_on:
-      - db
+      - "1433:1433"
+
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      SA_PASSWORD: "MyS3cure@Pwd"
+      ACCEPT_EULA: "Y"
+  
+      
+    volumes:
+      - mssql-data:/var/opt/mssql
+    networks:
+      - nest-network
+  
+
 
 volumes:
-  db-data:
+  mssql-data:
+
+networks:
+  nest-network:
+    driver: bridge
+
+

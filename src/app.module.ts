@@ -18,6 +18,7 @@ import { ConfigModule } from '@nestjs/config';
           case 'prod':
             return '.env.prod';
           case 'local':
+            return '.env';
           default:
             return '.env';
         }

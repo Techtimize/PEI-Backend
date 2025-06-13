@@ -4,11 +4,14 @@ import { ConfigType } from '@nestjs/config';
 import jwtConfig from '../Jwt/jwt-config';
 import { JwtUserPayLoad } from '../Jwt/interfaces/interfaces';
 import { handleTokenExpiryError } from 'src/Api-Response-Messages/handle-exception';
+import { PrismaService } from 'prisma/prisma.service';
+import { successResponse } from 'src/Api-Response-Messages/api-responses';
 
 @Injectable()
 export class JwtProvider {
   constructor(
     private readonly jwtService: JwtService,
+    private readonly prismaService: PrismaService,
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
@@ -25,6 +28,7 @@ export class JwtProvider {
   }
 
   async generateTokens(user: JwtUserPayLoad) {
+    console.log(this.jwtConfiguration.secret);
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken(
         user.microsoftId,
@@ -54,15 +58,42 @@ export class JwtProvider {
       );
     }
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
+      const payload = await this.jwtService.verify(token, {
         secret: this.jwtConfiguration.secret,
         audience: this.jwtConfiguration.audience,
         issuer: this.jwtConfiguration.issuer,
       });
       return payload.sub;
     } catch (error) {
+      console.log(error);
       return handleTokenExpiryError(error);
     }
   }
-  async findUserInDb() {}
+  async generateAccessTokenFromRefreshToken(authorization: string) {
+    try {
+      const userId = await this.verifyToken(authorization);
+      if (!userId) {
+        throw new UnauthorizedException('Invalid or expired token');
+      }
+
+      const { accessToken, refreshToken } = await this.generateTokens({
+        microsoftId: userId,
+        role: 'USER',
+      });
+      const result = await this.prismaService.user.update({
+        where: {
+          microsoftId: userId,
+        },
+        data: {
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+        },
+      });
+      return successResponse('access token generated successfully', result);
+    } catch (error) {
+      console.log(error);
+
+      return handleTokenExpiryError(error);
+    }
+  }
 }

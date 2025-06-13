@@ -60,7 +60,7 @@ export function unauthorizedError(message: string): never {
   );
 }
 
-export function userAlreadyExistError(message: string): never {
+export function companyAlreadyExistError(message: string): never {
   throw new HttpException(
     {
       statusCode: HttpStatus.CONFLICT,

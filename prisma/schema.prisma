@@ -21,3 +21,28 @@ model User {
   role         String   @default("USER")
   microsoftId  String?  @unique
 }
+
+model PeiCompany {
+  id                       String    @id @default(uuid())
+  pei_pb_id                String    @unique @db.VarChar(20)
+  pei_swift_client_number  String    @db.VarChar(20)
+  pei_gmdm_id              String    @db.VarChar(10)
+  pei_dgmf_id              String    @db.VarChar(10)
+  pei_duns_number          String    @db.VarChar(10)
+  pei_swift_client_name    String    @db.NVarChar(255)
+  pei_gmdm_legal_name      String    @db.NVarChar(255)
+  view_type                String    @db.VarChar(50)
+  tableau_inclusion_status String    @db.VarChar(50)
+  requested_by_team        String    @db.VarChar(50)
+  contact_email            String    @db.VarChar(50)
+  priority_for_feedback    Boolean   @db.Bit
+  reporting_team           String    @db.VarChar(50)
+  fy_period_added          String    @db.VarChar(20)
+  date_added               DateTime  @default(now()) @db.DateTime
+  last_update_date         DateTime  @default(now()) @db.DateTime
+  last_updated_by          String    @db.VarChar(50)
+  pei_pb_name              String    @db.VarChar(50)
+  sources                  String    @db.VarChar(50)
+  isDeleted                Boolean   @default(false) @db.Bit
+  date_deleted             DateTime? @db.DateTime
+}

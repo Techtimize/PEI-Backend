@@ -41,7 +41,6 @@ export class LoginController {
   @ApiBearerAuth('access-token')
   async generateAccessToken(@Req() req: Request) {
     const authHeader = req.headers['authorization'];
-    console.log('Authorization Header:', authHeader);
 
     if (!authHeader) {
       throw new UnauthorizedException('Authorization header missing');

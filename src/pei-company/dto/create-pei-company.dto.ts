@@ -1,13 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import {
-  Length,
-  IsString,
-  IsEmail,
-  IsDate,
-  IsBoolean,
-  IsOptional,
-} from 'class-validator';
+import { Length, IsString, IsEmail, IsDate, IsBoolean } from 'class-validator';
 
 export class CreatePeiCompanyDto {
   @ApiProperty({ example: 'PB12345' })
@@ -93,11 +86,6 @@ export class CreatePeiCompanyDto {
   @Type(() => Date)
   last_update_date: Date;
 
-  @ApiProperty({ example: 'admin_user' })
-  @IsString()
-  @Length(0, 50)
-  last_updated_by: string;
-
   @ApiProperty({ example: 'PB Account Name' })
   @IsString()
   @Length(0, 50)
@@ -111,10 +99,4 @@ export class CreatePeiCompanyDto {
   @ApiProperty({ example: false })
   @IsBoolean()
   isDeleted: boolean;
-
-  @ApiProperty({ example: '2025-06-12T00:00:00.000Z', required: false })
-  @IsOptional()
-  @IsDate()
-  @Type(() => Date)
-  date_deleted?: Date;
 }

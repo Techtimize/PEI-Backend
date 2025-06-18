@@ -28,7 +28,6 @@ export class JwtProvider {
   }
 
   async generateTokens(user: JwtUserPayLoad) {
-    console.log(this.jwtConfiguration.secret);
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken(
         user.microsoftId,
@@ -63,7 +62,8 @@ export class JwtProvider {
         audience: this.jwtConfiguration.audience,
         issuer: this.jwtConfiguration.issuer,
       });
-      return payload.sub;
+
+      return payload;
     } catch (error) {
       console.log(error);
       return handleTokenExpiryError(error);
@@ -71,18 +71,21 @@ export class JwtProvider {
   }
   async generateAccessTokenFromRefreshToken(authorization: string) {
     try {
-      const userId = await this.verifyToken(authorization);
-      if (!userId) {
+      const decoded = await this.verifyToken(authorization);
+      if (!('sub' in decoded)) {
+        throw new UnauthorizedException('Invalid or expired token');
+      }
+      if (!decoded.sub) {
         throw new UnauthorizedException('Invalid or expired token');
       }
 
       const { accessToken, refreshToken } = await this.generateTokens({
-        microsoftId: userId,
+        microsoftId: decoded.sub,
         role: 'USER',
       });
       const result = await this.prismaService.user.update({
         where: {
-          microsoftId: userId,
+          microsoftId: decoded.sub,
         },
         data: {
           accessToken: accessToken,

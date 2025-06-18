@@ -26,12 +26,12 @@ export const UserId = createParamDecorator(
     }
 
     const jwtProvider = getJwtProvider(ctx);
-    const userId = await jwtProvider.verifyToken(authHeader);
+    const decoded = await jwtProvider.verifyToken(authHeader);
 
-    if (!userId) {
+    if (!decoded) {
       throw new UnauthorizedException('Invalid token or user not found');
     }
 
-    return userId;
+    return decoded?.sub;
   },
 );

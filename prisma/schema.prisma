@@ -9,17 +9,19 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
-  displayName  String?
-  givenName    String?
-  surname      String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  accessToken  String?
-  refreshToken String?
-  role         String   @default("USER")
-  microsoftId  String?  @unique
+  id               String       @id @default(uuid())
+  email            String       @unique
+  displayName      String?
+  givenName        String?
+  surname          String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  accessToken      String?
+  refreshToken     String?
+  role             String       @default("USER")
+  microsoftId      String?      @unique @db.VarChar(50)
+  // Relation Fields
+  updatedCompanies PeiCompany[] @relation("UpdatedByUser")
 }
 
 model PeiCompany {
@@ -45,4 +47,7 @@ model PeiCompany {
   sources                  String    @db.VarChar(50)
   isDeleted                Boolean   @default(false) @db.Bit
   date_deleted             DateTime? @db.DateTime
+
+  // Relation Fields
+  lastUpdatedBy User @relation("UpdatedByUser", fields: [last_updated_by], references: [microsoftId])
 }

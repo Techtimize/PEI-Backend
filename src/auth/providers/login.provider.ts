@@ -12,7 +12,6 @@ import { MicrosoftTokenDto } from '../dto/microsoft.token.dto';
 @Injectable()
 export class LoginProvider {
   private readonly prismaService: PrismaService;
-  private readonly mailService: MailService;
   private readonly jwtProvider: JwtProvider;
   constructor(
     prismaService: PrismaService,
@@ -20,7 +19,6 @@ export class LoginProvider {
     jwtProvider: JwtProvider,
   ) {
     this.prismaService = prismaService;
-    this.mailService = mailService;
     this.jwtProvider = jwtProvider;
   }
 
@@ -51,7 +49,7 @@ export class LoginProvider {
         return successResponse('login successful', result);
       }
 
-      await this.prismaService.user.create({
+      const result = await this.prismaService.user.create({
         data: {
           microsoftId: data.id,
           displayName: data.displayName,
@@ -63,7 +61,7 @@ export class LoginProvider {
           role: 'USER',
         },
       });
-      return successResponse('login successful', res.data);
+      return successResponse('login successful', result);
     } catch (error) {
       return handleException('error while logging', error);
     }

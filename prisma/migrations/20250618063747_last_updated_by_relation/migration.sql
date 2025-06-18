@@ -3,6 +3,24 @@ BEGIN TRY
 BEGIN TRAN;
 
 -- CreateTable
+CREATE TABLE [dbo].[User] (
+    [id] NVARCHAR(1000) NOT NULL,
+    [email] NVARCHAR(1000) NOT NULL,
+    [displayName] NVARCHAR(1000),
+    [givenName] NVARCHAR(1000),
+    [surname] NVARCHAR(1000),
+    [createdAt] DATETIME2 NOT NULL CONSTRAINT [User_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
+    [updatedAt] DATETIME2 NOT NULL,
+    [accessToken] NVARCHAR(1000),
+    [refreshToken] NVARCHAR(1000),
+    [role] NVARCHAR(1000) NOT NULL CONSTRAINT [User_role_df] DEFAULT 'USER',
+    [microsoftId] VARCHAR(50),
+    CONSTRAINT [User_pkey] PRIMARY KEY CLUSTERED ([id]),
+    CONSTRAINT [User_email_key] UNIQUE NONCLUSTERED ([email]),
+    CONSTRAINT [User_microsoftId_key] UNIQUE NONCLUSTERED ([microsoftId])
+);
+
+-- CreateTable
 CREATE TABLE [dbo].[PeiCompany] (
     [id] NVARCHAR(1000) NOT NULL,
     [pei_pb_id] VARCHAR(20) NOT NULL,
@@ -26,8 +44,12 @@ CREATE TABLE [dbo].[PeiCompany] (
     [sources] VARCHAR(50) NOT NULL,
     [isDeleted] BIT NOT NULL CONSTRAINT [PeiCompany_isDeleted_df] DEFAULT 0,
     [date_deleted] DATETIME,
-    CONSTRAINT [PeiCompany_pkey] PRIMARY KEY CLUSTERED ([id])
+    CONSTRAINT [PeiCompany_pkey] PRIMARY KEY CLUSTERED ([id]),
+    CONSTRAINT [PeiCompany_pei_pb_id_key] UNIQUE NONCLUSTERED ([pei_pb_id])
 );
+
+-- AddForeignKey
+ALTER TABLE [dbo].[PeiCompany] ADD CONSTRAINT [PeiCompany_last_updated_by_fkey] FOREIGN KEY ([last_updated_by]) REFERENCES [dbo].[User]([microsoftId]) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 COMMIT TRAN;
 

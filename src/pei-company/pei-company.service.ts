@@ -107,7 +107,10 @@ export class PeiCompanyService {
       const pagination: PaginationInterface = {
         currentPage: query.pageNo,
         totalPages: Math.ceil(total / query.limit),
-        remainingPages: Math.ceil(total / query.limit) - query.pageNo,
+        remainingPages: Math.max(
+          0,
+          Math.ceil(total / query.limit) - query.pageNo,
+        ),
       };
       return paginatedSuccessResponse('pie companies found', data, pagination);
     } catch (error) {

@@ -66,4 +66,15 @@ export class PeiCompanyController {
     const updatedQuery = getPagination(query);
     return this.peiCompanyService.searchForPieCompany(updatedQuery);
   }
+
+  @UseGuards(UserAuthenticatedGuard)
+  @ApiResponse({ status: 201, description: 'PIE Company Found' })
+  @ApiResponse({ status: 400, description: 'Validation error' })
+  @ApiResponse({ status: 403, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Not Found' })
+  @Get('/:id')
+  @ApiOperation({ summary: 'Search a  PEI company' })
+  getPeiCompanyById(@Param() validateId: ValidateId) {
+    return this.peiCompanyService.getPeiCompanyById(validateId);
+  }
 }

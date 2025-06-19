@@ -72,7 +72,11 @@ export class PeiCompanyService {
           id: validateId.id,
         },
 
-        data: { ...updatePeiCompanyDto, last_updated_by: userId },
+        data: {
+          ...updatePeiCompanyDto,
+          last_updated_by: userId,
+          last_update_date: new Date(),
+        },
       });
       return successResponse(
         'pei company updated successfully',
@@ -113,6 +117,23 @@ export class PeiCompanyService {
         ),
       };
       return paginatedSuccessResponse('pie companies found', data, pagination);
+    } catch (error) {
+      return handleException('error while searching for peiCompany', error);
+    }
+  }
+  async getPeiCompanyById(validateId: ValidateId) {
+    try {
+      const pie = await this.prismaService.peiCompany.findUnique({
+        where: {
+          id: validateId.id,
+        },
+      });
+      if (!pie) {
+        return notFoundErrorResponse(
+          `pei company with id ${validateId.id} not found`,
+        );
+      }
+      return successResponse('pie company found', pie);
     } catch (error) {
       return handleException('error while searching for peiCompany', error);
     }

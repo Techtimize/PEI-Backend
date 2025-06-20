@@ -9,19 +9,20 @@ datasource db {
 }
 
 model User {
-  id               String       @id @default(uuid())
-  email            String       @unique
-  displayName      String?
-  givenName        String?
-  surname          String?
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
-  accessToken      String?
-  refreshToken     String?
-  role             String       @default("USER")
-  microsoftId      String?      @unique @db.VarChar(50)
+  id                String             @id @default(uuid())
+  email             String             @unique
+  displayName       String?
+  givenName         String?
+  surname           String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  accessToken       String?
+  refreshToken      String?
+  role              String             @default("USER")
+  microsoftId       String?            @unique @db.VarChar(50)
   // Relation Fields
-  updatedCompanies PeiCompany[] @relation("UpdatedByUser")
+  updatedCompanies  PeiCompany[]       @relation("UpdatedByUser")
+  updatedPortfolios PortfolioCompany[] @relation("UpdatedPortfolioByUser")
 }
 
 model PeiCompany {
@@ -50,4 +51,21 @@ model PeiCompany {
 
   // Relation Fields
   lastUpdatedBy User @relation("UpdatedByUser", fields: [last_updated_by], references: [microsoftId])
+}
+
+model PortfolioCompany {
+  portfolio_duns_number         String   @id @db.VarChar(10)
+  portfolio_pb_id               String   @db.VarChar(20)
+  portfolio_swift_client_number String   @db.VarChar(20)
+  portfolio_gmdm_id             String   @db.VarChar(10)
+  portfolio_dgmf_id             String   @db.VarChar(10)
+  portfolio_swift_client_name   String   @db.NVarChar(255)
+  portfolio_gmdm_legal_name     String   @db.NVarChar(255)
+  date_added                    DateTime @default(now()) @db.DateTime
+  last_update_date              DateTime @default(now()) @db.DateTime
+  last_updated_by               String   @db.VarChar(50)
+  portfolio_pb_name             String   @db.VarChar(255)
+  Sources                       String   @db.VarChar(50)
+
+  lastUpdatedBy User @relation("UpdatedPortfolioByUser", fields: [last_updated_by], references: [microsoftId])
 }

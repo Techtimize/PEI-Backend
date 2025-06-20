@@ -54,7 +54,8 @@ model PeiCompany {
 }
 
 model PortfolioCompany {
-  portfolio_duns_number         String   @id @db.VarChar(10)
+  id                            String   @id @default(uuid())
+  portfolio_duns_number         String   @unique @db.VarChar(10)
   portfolio_pb_id               String   @db.VarChar(20)
   portfolio_swift_client_number String   @db.VarChar(20)
   portfolio_gmdm_id             String   @db.VarChar(10)

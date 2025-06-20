@@ -8,6 +8,7 @@ import { MailModule } from './emailModule/email.module';
 import { ConfigModule } from '@nestjs/config';
 import { PeiCompanyModule } from './pei-company/pei-company.module';
 import { JwtProviderMiddleware } from './Middlewares/token.injector.middleware';
+import { PortfolioCompanyModule } from './portfolio-company/portfolio-company.module';
 import jwtConfig from './auth/Jwt/jwt-config'; // ✅ <-- Add this import
 
 @Module({
@@ -33,6 +34,7 @@ import jwtConfig from './auth/Jwt/jwt-config'; // ✅ <-- Add this import
     AuthJwtModule,
     MailModule,
     PeiCompanyModule,
+    PortfolioCompanyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

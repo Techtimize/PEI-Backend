@@ -4,8 +4,10 @@ import { handleException } from 'src/Api-Response-Messages/handle-exception';
 import { PrismaService } from 'prisma/prisma.service';
 import {
   companyAlreadyExistError,
+  notFoundErrorResponse,
   successResponse,
 } from 'src/Api-Response-Messages/api-responses';
+import { ValidateId } from 'src/Global-Dtos/validate.id.dto';
 
 @Injectable()
 export class PortfolioCompanyService {
@@ -36,6 +38,27 @@ export class PortfolioCompanyService {
       return successResponse('portfolio company created successfully', data);
     } catch (error) {
       return handleException('error while creating portfolio company', error);
+    }
+  }
+
+  async getPortfolioCompanyById(validateId: ValidateId) {
+    try {
+      const portfolioCompany = await this.prisma.portfolioCompany.findUnique({
+        where: {
+          id: validateId.id,
+        },
+      });
+      if (!portfolioCompany) {
+        return notFoundErrorResponse(
+          `portfolio company with id ${validateId.id} not found`,
+        );
+      }
+      return successResponse('portfolio company found', portfolioCompany);
+    } catch (error) {
+      return handleException(
+        'error while searching for portfolio company',
+        error,
+      );
     }
   }
 }

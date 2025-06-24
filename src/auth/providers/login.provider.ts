@@ -55,7 +55,7 @@ export class LoginProvider {
           displayName: data.displayName,
           givenName: data.givenName,
           surname: data.surname,
-          email: data.mail,
+          email: data.mail ?? data.userPrincipalName,
           accessToken,
           refreshToken,
           role: 'USER',

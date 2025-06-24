@@ -39,7 +39,7 @@ model PeiCompany {
   tableau_inclusion_status String    @db.VarChar(50)
   requested_by_team        String    @db.VarChar(50)
   contact_email            String    @db.VarChar(50)
-  priority_for_feedback    Boolean   @db.Bit
+  priority_for_feedback    String    @db.VarChar(50)
   reporting_team           String    @db.VarChar(50)
   fy_period_added          String    @db.VarChar(20)
   date_added               DateTime  @default(now()) @db.DateTime

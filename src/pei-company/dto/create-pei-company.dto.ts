@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Length, IsString, IsEmail, IsBoolean } from 'class-validator';
+import { Length, IsString, IsEmail } from 'class-validator';
 
 export class CreatePeiCompanyDto {
   @ApiProperty({ example: 'PB12345' })
@@ -61,9 +61,10 @@ export class CreatePeiCompanyDto {
   @Length(0, 50)
   contact_email: string;
 
-  @ApiProperty({ example: true })
-  @IsBoolean()
-  priority_for_feedback: boolean;
+  @ApiProperty({ example: 'None' })
+  @IsString()
+  @Length(0, 50)
+  priority_for_feedback: string;
 
   @ApiProperty({ example: 'Reporting Team A' })
   @IsString()

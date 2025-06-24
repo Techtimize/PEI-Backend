@@ -6,7 +6,7 @@ import { swaggerConfig } from './config/swagger.config';
 import { SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  console.log("DB URL ENV", process.env.DATABASE_URL)
+  console.log('DB URL ENV', process.env.DATABASE_URL);
   const app = await NestFactory.create(AppModule);
   app.enableCors();
   const document = SwaggerModule.createDocument(app, swaggerConfig);

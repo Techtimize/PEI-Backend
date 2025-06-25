@@ -18,6 +18,17 @@ export function successResponse<T>(message: string, data?: T): ApiResponse<T> {
   };
 }
 
+export function postSuccessResponse<T>(
+  message: string,
+  data?: T,
+): ApiResponse<T> {
+  return {
+    statusCode: HttpStatus.CREATED,
+    message,
+    data,
+  };
+}
+
 export function notFoundErrorResponse<T>(message: string): ApiResponse<T> {
   throw new HttpException(
     {

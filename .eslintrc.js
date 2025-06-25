@@ -13,8 +13,14 @@ module.exports = {
     'plugin:prettier/recommended',
   ],
   rules: {
-    'prettier/prettier': 'error',
-    // Add any other custom rules you need
+    'prettier/prettier': [
+      'error',
+      {
+        endOfLine: 'auto',
+      },
+
+      // Add any other custom rules you need
+    ],
   },
   ignorePatterns: ['dist/', 'node_modules/'],
 };

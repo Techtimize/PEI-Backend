@@ -67,7 +67,7 @@ model PortfolioCompany {
   last_update_date              DateTime @default(now()) @db.DateTime
   last_updated_by               String   @db.VarChar(50)
   portfolio_pb_name             String   @db.VarChar(255)
-  Sources                       String   @db.VarChar(50)
+  sources                       String   @db.VarChar(50)
 
   lastUpdatedBy User @relation("UpdatedPortfolioByUser", fields: [last_updated_by], references: [microsoftId])
 }

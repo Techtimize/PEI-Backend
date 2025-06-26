@@ -81,5 +81,5 @@ export class CreatePortfolioCompanyDto {
   })
   @IsString()
   @Length(1, 50)
-  Sources: string;
+  sources: string;
 }
